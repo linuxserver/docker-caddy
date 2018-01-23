@@ -13,14 +13,17 @@ ARG CADDY_PLUGS="http.ipfilter,http.login,http.jwt"
 RUN \
  echo "**** install packages ****" && \
  apk add --no-cache \
-	curl && \
+	curl \
+	libcap && \
  echo "**** install caddy and plugins ****" && \
  curl -o \
  /tmp/caddy.tar.gz -L \
 	"https://caddyserver.com/download/linux/${CADDY_ARCH}?license=personal&plugins=${CADDY_PLUGS}" && \
  tar -xf \
  /tmp/caddy.tar.gz -C \
-	/usr/local/bin/
+	/usr/local/bin/ && \
+ echo "**** give caddy permissions to use low ports ****" && \
+ setcap cap_net_bind_service=+ep /usr/local/bin/caddy
 
 # copy local files
 COPY root/ /
@@ -28,6 +31,3 @@ COPY root/ /
 # ports and volumes
 EXPOSE 80 443
 VOLUME /config
-
-# run caddy
-CMD ["/usr/local/bin/caddy", "-conf", "/config/Caddyfile", "-root", "/config/www"]
