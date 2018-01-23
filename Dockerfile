@@ -1,20 +1,31 @@
 FROM lsiobase/alpine:3.7
 
+# set version label
+ARG BUILD_DATE
+ARG VERSION
+LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="p3lim"
-ARG plugins="http.ipfilter,http.login,http.jwt"
 
-# install dependencies
-RUN apk add --no-cache curl
+# package versions and plugins etc
+ARG CADDY_ARCH="amd64"
+ARG CADDY_PLUGS="http.ipfilter,http.login,http.jwt"
 
-# install caddy with plugins
-RUN curl -fsSL "https://caddyserver.com/download/linux/amd64?license=personal&plugins=$plugins" -o /tmp/caddy && \
-	tar -xzf /tmp/caddy -C /usr/local/bin/ caddy && \
-	caddy -version
+RUN \
+ echo "**** install packages ****" && \
+ apk add --no-cache \
+	curl && \
+ echo "**** install caddy and plugins ****" && \
+ curl -o \
+ /tmp/caddy.tar.gz -L \
+	"https://caddyserver.com/download/linux/${CADDY_ARCH}?license=personal&plugins=${CADDY_PLUGS}" && \
+ tar -xf \
+ /tmp/caddy.tar.gz -C \
+	/usr/local/bin/
 
 # copy local files
 COPY root/ /
 
-# expose ourselves
+# ports and volumes
 EXPOSE 80 443
 VOLUME /config
 
