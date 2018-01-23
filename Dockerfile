@@ -28,6 +28,9 @@ RUN \
 # copy local files
 COPY root/ /
 
+# set home for the user (acme needs this)
+ENV HOME /config
+
 # ports and volumes
 EXPOSE 80 443
 VOLUME /config
