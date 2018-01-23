@@ -1,0 +1,11 @@
+#!/usr/bin/with-contenv bash
+
+# copy config
+shopt -s globstar nullglob
+for i in /defaults/*
+do
+	[[ ! -e "/config/${i#/defaults/}" ]] && cp -rv "$i" "/config/${i#/defaults/}"
+done
+
+# permissions
+chown abc:abc -R /config
