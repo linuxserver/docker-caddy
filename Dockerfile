@@ -14,7 +14,8 @@ RUN \
  echo "**** install packages ****" && \
  apk add --no-cache \
 	curl \
-	libcap && \
+	libcap \
+	inotify-tools && \
  echo "**** install caddy and plugins ****" && \
  curl -o \
  /tmp/caddy.tar.gz -L \
